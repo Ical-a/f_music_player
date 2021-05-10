@@ -1,6 +1,6 @@
-#Bash script for command line music playing with fuzzy finder
+# Bash script for command line music playing with fuzzy finder
 
-##Dependencies
+## Dependencies
 mpv
 fzf
 bash
