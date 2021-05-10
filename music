@@ -1,0 +1,37 @@
+#!/bin/bash
+#A music player to play music I like, and only that
+music_file=~/.local/share/music_list.csv
+
+main (){
+	echo $vid_selected
+	vid=$(grep "$vid_selected" $music_file|cut -d ',' -f 2)
+	mpv --no-vid $vid
+}
+
+#I apologise sincerely for this abomination that I have created
+#it works, but I dont like it. Im basically writing the same code twice
+shuffle (){
+	while [[ true ]];do
+		local previous_vid=$vid_selected
+		vid_selected=$(cut -d ',' -f 1 $music_file|grep -v quit|grep -v shuffle|shuf -n 1)
+		if [[ $vid_selected != "$previous_vid" ]];then
+			main
+			previous_vid=$vid_selected
+		else
+			continue
+		fi
+	done
+}
+
+while [[ true ]];do
+	#This is probably a horribly inefficient way of doing this
+	#I dont know about command line options yet
+	vid_selected=$(cut -d ',' -f 1 $music_file|fzf --reverse)
+	if [[ $vid_selected == "quit" ]];then
+		break
+	elif [[ $vid_selected == "shuffle" ]];then
+		shuffle
+	fi
+	#ill improve this later, when I finish learning
+	main
+done
