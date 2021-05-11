@@ -1,6 +1,8 @@
 #!/bin/bash
 #A music player to play music I like, and only that
 music_file=~/.local/share/music_list.csv
+#start with random song (why not)
+vid_selected=$(cut -d ',' -f 1 $music_file|grep -v quit|shuf -n 1)
 
 main (){
 	echo $vid_selected
