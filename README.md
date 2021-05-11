@@ -4,3 +4,7 @@
 * mpv
 * fzf
 * bash
+
+## Usage
+Run normally to select music, run with -l for shuffle. 
+Quit by typing quit while in search mode and spam ^C to quit in shuffle mode.
