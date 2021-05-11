@@ -5,33 +5,47 @@ music_file=~/.local/share/music_list.csv
 main (){
 	echo $vid_selected
 	vid=$(grep "$vid_selected" $music_file|cut -d ',' -f 2)
-	mpv --no-vid $vid
+	echo $vid
+	mpv --no-vid "$vid" 2> /dev/null
 }
 
-#I apologise sincerely for this abomination that I have created
-#it works, but I dont like it. Im basically writing the same code twice
+#I somehow acheived recursion, dont ask how
 shuffle (){
-	while true;do
-		local previous_vid=$vid_selected
-		vid_selected=$(cut -d ',' -f 1 $music_file|grep -v quit|grep -v shuffle|shuf -n 1)
-		if [[ $vid_selected != "$previous_vid" ]];then
-			main
-			previous_vid=$vid_selected
-		else
-			continue
-		fi
-	done
-}
-
-while true;do
-	#This is probably a horribly inefficient way of doing this
-	#I dont know about command line options yet
-	vid_selected=$(cut -d ',' -f 1 $music_file|fzf --reverse)
-	if [[ $vid_selected == "quit" ]];then
-		break
-	elif [[ $vid_selected == "shuffle" ]];then
+	local previous_vid=$vid_selected
+	vid_selected=$(cut -d ',' -f 1 $music_file|grep -v quit|shuf -n 1)
+	if [[ $vid_selected != "$previous_vid" ]];then
+		previous_vid=$vid_selected
+		return
+	else
+		#by doing this, I am assigning the same value twice to local variable previous_vid
 		shuffle
 	fi
-	#ill improve this later, when I finish learning
-	main
-done
+}
+
+#still writing the same code twice with no exit sequence for shuffling (just spamming ^C for now)
+#also throws an error when you quit out of it (That I cant surpress)
+#error fixed
+if [[ $1 == "-l" ]];then
+	while true;do
+		shuffle
+		main
+	done
+else
+	while [[ $vid_selected != "quit" ]];do
+		main
+		vid_selected=$(cut -d ',' -f 1 $music_file|fzf --reverse)
+	done
+fi
+
+#while true;do
+#	#This is probably a horribly inefficient way of doing this
+#	#I dont know about command line options yet
+#	vid_selected=$(cut -d ',' -f 1 $music_file|fzf --reverse)
+#	if [[ $vid_selected == "quit" ]];then
+#		break
+#	elif [[ $vid_selected == "shuffle" ]];then
+#		shuffle
+#	fi
+#	#ill improve this later, when I finish learning
+#	main
+#done
