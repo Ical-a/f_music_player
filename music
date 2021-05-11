@@ -11,7 +11,7 @@ main (){
 #I apologise sincerely for this abomination that I have created
 #it works, but I dont like it. Im basically writing the same code twice
 shuffle (){
-	while [[ true ]];do
+	while true;do
 		local previous_vid=$vid_selected
 		vid_selected=$(cut -d ',' -f 1 $music_file|grep -v quit|grep -v shuffle|shuf -n 1)
 		if [[ $vid_selected != "$previous_vid" ]];then
@@ -23,7 +23,7 @@ shuffle (){
 	done
 }
 
-while [[ true ]];do
+while true;do
 	#This is probably a horribly inefficient way of doing this
 	#I dont know about command line options yet
 	vid_selected=$(cut -d ',' -f 1 $music_file|fzf --reverse)
