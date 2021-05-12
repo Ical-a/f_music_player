@@ -1,53 +1,35 @@
 #!/bin/bash
-#A music player to play music I like, and only that
 music_file=~/.local/share/music_list.csv
-#start with random song (why not)
-vid_selected=$(cut -d ',' -f 1 $music_file|grep -v quit|shuf -n 1)
 
+#main body that always plays the music
 main (){
 	echo $vid_selected
 	vid=$(grep "$vid_selected" $music_file|cut -d ',' -f 2)
-	echo $vid
-	mpv --no-vid "$vid" 2> /dev/null
+	mpv --no-vid "$vid"
 }
 
-#I somehow acheived recursion, dont ask how
+#allowing to choose $vid_selected
+choosing (){
+	vid_selected="$(cut -d ',' -f 1 $music_file|fzf --reverse)"
+	[[ $vid_selected == "" ]] && exit 0
+}
+
+#setting $vid_selected to be random
 shuffle (){
 	local previous_vid=$vid_selected
-	vid_selected=$(cut -d ',' -f 1 $music_file|grep -v quit|shuf -n 1)
-	if [[ $vid_selected != "$previous_vid" ]];then
-		previous_vid=$vid_selected
-		return
-	else
-		#by doing this, I am assigning the same value twice to local variable previous_vid
-		shuffle
-	fi
+	vid_selected=$(cut -d ',' -f 1 $music_file|shuf -n 1)
+	[[ $vid_selected == $previous_vid ]] && shuffle
 }
 
-#still writing the same code twice with no exit sequence for shuffling (just spamming ^C for now)
-#also throws an error when you quit out of it (That I cant surpress)
-#error fixed
+#to see which option they have chosen
 if [[ $1 == "-l" ]];then
-	while true;do
-		shuffle
-		main
-	done
+	todo=shuffle
 else
-	while [[ $vid_selected != "quit" ]];do
-		main
-		vid_selected=$(cut -d ',' -f 1 $music_file|fzf --reverse)
-	done
+	todo=choosing
 fi
 
-#while true;do
-#	#This is probably a horribly inefficient way of doing this
-#	#I dont know about command line options yet
-#	vid_selected=$(cut -d ',' -f 1 $music_file|fzf --reverse)
-#	if [[ $vid_selected == "quit" ]];then
-#		break
-#	elif [[ $vid_selected == "shuffle" ]];then
-#		shuffle
-#	fi
-#	#ill improve this later, when I finish learning
-#	main
-#done
+#The main loop
+while true;do
+	$todo
+	main
+done
