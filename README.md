@@ -16,13 +16,13 @@ fmupl reads from a file:
 `~/.local/share/music_list.csv`.
 It is created on installing, and is empty by default.
 
-add songs in this format in the file:
-
-`name of song,link to song`
+Running:
+`fmupl -a`
+will prompt you to add a song
 
 The link can be a youtube link, or a link from any other site.
 Other sites might not work all the time.
 
-NOTE: Do not name two songs the same
+*WARNING*: Do not name two songs the same or put a comma in the song name
 ### Removing songs
 Simply delete the line in `~/.local/share/music_list.csv` of the song you want to remove
