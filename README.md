@@ -7,6 +7,7 @@
 
 ## Installation
 `# ./install.sh`
+
 ## Usage
 Run fmupl to select music, run with -l for shuffle. 
 Inputing no characters when selecting music will quit and spamming ^C (Ctrl-C) in shuffle mode will quit in shuffle mode
@@ -23,3 +24,5 @@ The link can be a youtube link, or a link from any other site.
 Other sites might not work all the time.
 
 NOTE: Do not name two songs the same
+### Removing songs
+Simply delete the line in `~/.local/share/music_list.csv` of thesong you want to remove
