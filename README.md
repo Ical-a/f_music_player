@@ -6,8 +6,8 @@
 * bash
 
 ## Installation
-'''bash
-	./install.sh
+'''
+	# ./install.sh
 '''
 ## Usage
 Run fmupl to select music, run with -l for shuffle. 
