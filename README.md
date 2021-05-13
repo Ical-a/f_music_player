@@ -25,4 +25,4 @@ Other sites might not work all the time.
 
 NOTE: Do not name two songs the same
 ### Removing songs
-Simply delete the line in `~/.local/share/music_list.csv` of thesong you want to remove
+Simply delete the line in `~/.local/share/music_list.csv` of the song you want to remove
