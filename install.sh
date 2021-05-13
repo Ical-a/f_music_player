@@ -1,3 +1,4 @@
 #!/bin/sh
 
-echo "quit," >> ~/.local/share/music_list.csv
+file=~/.local/share/music_list.csv
+[ -e $file ] || touch $file
