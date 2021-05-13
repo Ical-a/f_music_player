@@ -1,6 +1,15 @@
 #!/bin/bash
 music_file=~/.local/share/music_list.csv
 
+if [[ $1 == "-a" ]];then
+	echo -en "Enter name of song \e[1;31m>\e[0m "
+	read song_added
+	echo -en "Enter link of song \e[1;31m>\e[0m "
+	read song_link
+	echo "$song_added,$song_link" >> $music_file
+	exit 0
+fi
+
 #main body that always plays the music
 main (){
 	echo $vid_selected
@@ -10,7 +19,7 @@ main (){
 
 #allowing to choose $vid_selected
 choosing (){
-	vid_selected="$(cut -d ',' -f 1 $music_file|fzf --reverse)"
+	vid_selected="$(cut -d ',' -f 1 $music_file|fzf --reverse )"
 	[[ $vid_selected == "" ]] && exit 0
 }
 
@@ -18,6 +27,8 @@ choosing (){
 shuffle (){
 	local previous_vid=$vid_selected
 	vid_selected=$(cut -d ',' -f 1 $music_file|shuf -n 1)
+	#this still causes previoud_vid to be set twice
+	#can fix by making previous_vid global
 	[[ $vid_selected == $previous_vid ]] && shuffle
 }
 
