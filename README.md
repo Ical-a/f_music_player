@@ -16,7 +16,7 @@ fmupl reads from a file:
 `~/.local/share/music_list.csv`.
 It is created on installing, and is empty by default.
 
-add songs in this format:
+add songs in this format in the file:
 
 `name of song,link to song`
 
