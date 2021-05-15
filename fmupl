@@ -1,14 +1,15 @@
 #!/bin/bash
 music_file=~/.local/share/music_list.csv
 
-if [[ $1 == "-a" ]];then
+#adding songs function
+adding_songs (){
 	echo -en "Enter name of song \e[1;31m>\e[0m "
 	read song_added
 	echo -en "Enter link of song \e[1;31m>\e[0m "
 	read song_link
 	echo "$song_added,$song_link" >> $music_file
 	exit 0
-fi
+}
 
 #main body that always plays the music
 main (){
@@ -33,11 +34,11 @@ shuffle (){
 }
 
 #to see which option they have chosen
-if [[ $1 == "-l" ]];then
-	todo=shuffle
-else
-	todo=choosing
-fi
+case "$1" in
+	-s|--shuffle)	todo=shuffle ;;
+	-a|--adding)	todo=adding_songs ;;
+	*)				todo=choosing
+esac
 
 #The main loop
 while true;do
