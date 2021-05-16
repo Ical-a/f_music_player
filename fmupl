@@ -11,6 +11,10 @@ adding_songs (){
 	exit 0
 }
 
+online_searching (){
+	ytfzf -ms $1
+}
+
 #main body that always plays the music
 main (){
 	echo $vid_selected
@@ -22,6 +26,7 @@ main (){
 choosing (){
 	vid_selected="$(cut -d ',' -f 1 $music_file|fzf --reverse )"
 	[[ $vid_selected == "" ]] && exit 0
+	main
 }
 
 #setting $vid_selected to be random
@@ -31,17 +36,22 @@ shuffle (){
 	#this still causes previoud_vid to be set twice
 	#can fix by making previous_vid global
 	[[ $vid_selected == $previous_vid ]] && shuffle
+	main
 }
 
 #to see which option they have chosen
 case "$1" in
 	-s|--shuffle)	todo=shuffle ;;
 	-a|--adding)	todo=adding_songs ;;
-	*)				todo=choosing
+
+	-o|--online)	
+					shift
+					online_searching "$*"
+					;;
+	*)				todo=choosing ;;
 esac
 
 #The main loop
 while true;do
 	$todo
-	main
 done
