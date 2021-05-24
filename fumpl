@@ -24,7 +24,7 @@ main (){
 
 #allowing to choose $vid_selected
 choosing (){
-	vid_selected="$(cut -d ',' -f 1 $music_file|fzf --reverse )"
+	vid_selected="$(cut -d ',' -f 1 $music_file|sort|fzf --reverse )"
 	[[ $vid_selected == "" ]] && exit 0
 	main
 }
