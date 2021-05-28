@@ -11,10 +11,6 @@ adding_songs (){
 	exit 0
 }
 
-online_searching (){
-	ytfzf -ms $1
-}
-
 #main body that always plays the music
 main (){
 	echo $vid_selected
@@ -27,6 +23,11 @@ choosing (){
 	vid_selected="$(cut -d ',' -f 1 $music_file|sort|fzf --reverse )"
 	[[ $vid_selected == "" ]] && exit 0
 	main
+}
+
+online_searching (){
+	ytfzf -m $1
+	choosing
 }
 
 #setting $vid_selected to be random
@@ -44,8 +45,7 @@ case "$1" in
 	-s|--shuffle)	todo=shuffle ;;
 	-a|--adding)	todo=adding_songs ;;
 
-	-o|--online)	
-					shift
+	-o|--online)	shift
 					online_searching "$*"
 					;;
 	*)				todo=choosing ;;

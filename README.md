@@ -9,7 +9,7 @@
 `# ./install.sh`
 
 ## Usage
-Run just fmupl to select music.
+Run just fumpl to select music.
 
 Inputing no characters when selecting music will quit 
 
