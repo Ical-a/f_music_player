@@ -37,6 +37,7 @@ shuffle (){
 	#this still causes previoud_vid to be set twice
 	#can fix by making previous_vid global
 	[[ $vid_selected == $previous_vid ]] && shuffle
+	echo $previous_vid
 	main
 }
 
