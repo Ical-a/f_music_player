@@ -2,16 +2,18 @@
 
 ## Dependencies
 * mpv
+* youtube-dl
 * fzf
 * bash
+* ytfzf (if you want online searching)
 
 ## Installation
 `# ./install.sh`
 
 ## Usage
-Run just fumpl to select music.
+just run `fumpl` to select music.
 
-Inputing no characters when selecting music will quit 
+Hitting escape will exit fuzzy finder, and will also exit fumpl
 
 ### Shuffling Songs
 Run:
@@ -19,6 +21,7 @@ Run:
 `fmupl --shuffle` or
 
 Spamming ^C (Ctrl-C) in shuffle mode will quit in shuffle mode.
+No idea how to make that work, sorry.
 
 ### Adding songs
 fmupl reads from a file:
@@ -37,3 +40,21 @@ Other sites might not work all the time.
 
 ### Removing songs
 Simply delete the line in `~/.local/share/music_list.csv` of the song you want to remove
+
+### Searching Online
+If you want to search online, you need to have ytfzf installed.
+[text link](https://github.com/pystardust/ytfzf)
+link ^^
+
+Run:  
+`fumple -o` or
+`fumple --online`
+to search and play a song from youtube. It uses mpv (and in turn youtube-dl) 
+
+### Searching and adding songs from youtube
+Once again, you need to have ytfzf installed for this to work
+Run: 
+`fumpl -oa` or
+`fumpl -ao` or
+`fumpl --online-adding`
+to search youtube and add a song
