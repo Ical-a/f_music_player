@@ -1,58 +1,71 @@
 #!/bin/bash
 music_file=~/.local/share/music_list.csv
 
-#adding songs function
+# adding songs function
 adding_songs (){
 	echo -en "Enter name of song \e[1;31m>\e[0m "
 	read song_added
-	echo -en "Enter link of song \e[1;31m>\e[0m "
-	read song_link
+
+	# unless the song is se by online_adding,
+	# ask the user to put a song in
+	if [[ !(-n "$song_link") ]];then
+		echo -en "Enter link of song \e[1;31m>\e[0m "
+		read song_link
+	fi
+
+	# put song in music file
 	echo "$song_added,$song_link" >> $music_file
+	echo ""
+	# remove if you want to add multiple songs in a loop
 	exit 0
 }
 
-#main body that always plays the music
+# use ytfzf to get and add links to the file
+online_adding (){
+	echo -en "\e[0;31mSearch song:\e[0m "
+	song_link=$(ytfzf -L|cut -d ' ' -f 3)
+	echo $song_link
+	adding_songs
+}
+
+# main body that plays the music
 main (){
 	echo $vid_selected
 	vid=$(grep "$vid_selected" $music_file|cut -d ',' -f 2)
-	mpv --no-vid "$vid"
+	mpv --no-vid $vid
 }
 
-#allowing to choose $vid_selected
+# allowing to choose $vid_selected
 choosing (){
 	vid_selected="$(cut -d ',' -f 1 $music_file|sort|fzf --reverse )"
 	[[ $vid_selected == "" ]] && exit 0
 	main
 }
 
-online_searching (){
-	ytfzf -m $1
-	choosing
-}
-
-#setting $vid_selected to be random
+# setting $vid_selected to be random
+# recursion also to make sure that the song is not the same as 
+# the last one
 shuffle (){
 	local previous_vid=$vid_selected
-	vid_selected=$(cut -d ',' -f 1 $music_file|shuf -n 1)
-	#this still causes previoud_vid to be set twice
-	#can fix by making previous_vid global
-	[[ $vid_selected == $previous_vid ]] && shuffle
 	echo $previous_vid
+	vid_selected=$(cut -d ',' -f 1 $music_file|shuf -n 1)
+	[[ $vid_selected == $previous_vid ]] && shuffle
 	main
 }
 
 #to see which option they have chosen
 case "$1" in
-	-s|--shuffle)	todo=shuffle ;;
-	-a|--adding)	todo=adding_songs ;;
+	-s|--shuffle)	todo="shuffle " ;;
+	-a|--adding)	todo="adding_songs" ;;
 
-	-o|--online)	shift
-					online_searching "$*"
-					;;
-	*)				todo=choosing ;;
+	# there might be a more efficient way to do this
+	-o|--online)	ytfzf -ms && exit 0 ||echo -e "\e[0;31mytfzf is not installed\e[0m" ; exit 1 ;;
+	-oa|-ao|--online-adding)	todo="online_adding" ;;
+
+	*)				todo="choosing" ;;
 esac
 
-#The main loop
-while true;do
+#as long as $todo is not empty, loop it
+while [ -n "$todo " ];do
 	$todo
 done
