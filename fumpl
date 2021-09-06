@@ -1,71 +1,32 @@
 #!/bin/bash
 music_file=~/.local/share/music_list.csv
 
-# adding songs function
-adding_songs (){
-	echo -en "Enter name of song \e[1;31m>\e[0m "
-	read song_added
+# TODO: uses cut twice, I don't like it
+choosing (){
+	vid_selected="$(cut -d ',' -f 1 $music_file|sort|fzf --reverse )"
+	[ -z "$vid_selected" ] && exit 0
 
-	# unless the song is se by online_adding,
-	# ask the user to put a song in
-	if [[ !(-n "$song_link") ]];then
-		echo -en "Enter link of song \e[1;31m>\e[0m "
-		read song_link
-	fi
-
-	# put song in music file
-	echo "$song_added,$song_link" >> $music_file
-	echo ""
-	# remove if you want to add multiple songs in a loop
-	exit 0
-}
-
-# use ytfzf to get and add links to the file
-online_adding (){
-	echo -en "\e[0;31mSearch song:\e[0m "
-	song_link=$(ytfzf -L|cut -d ' ' -f 3)
-	echo $song_link
-	adding_songs
-}
-
-# main body that plays the music
-main (){
-	echo $vid_selected
 	vid=$(grep "$vid_selected" $music_file|cut -d ',' -f 2)
 	mpv --no-vid $vid
 }
 
-# allowing to choose $vid_selected
-choosing (){
-	vid_selected="$(cut -d ',' -f 1 $music_file|sort|fzf --reverse )"
-	[[ $vid_selected == "" ]] && exit 0
-	main
-}
-
-# setting $vid_selected to be random
-# recursion also to make sure that the song is not the same as 
-# the last one
+# one liner for shuffling
 shuffle (){
-	local previous_vid=$vid_selected
-	echo $previous_vid
-	vid_selected=$(cut -d ',' -f 1 $music_file|shuf -n 1)
-	[[ $vid_selected == $previous_vid ]] && shuffle
-	main
+	cut -d ',' -f 2 $music_file|shuf|xargs mpv
 }
 
-#to see which option they have chosen
+# main case
 case "$1" in
 	-s|--shuffle)	todo="shuffle " ;;
-	-a|--adding)	todo="adding_songs" ;;
-
-	# there might be a more efficient way to do this
-	-o|--online)	ytfzf -ms && exit 0 ||echo -e "\e[0;31mytfzf is not installed\e[0m" ; exit 1 ;;
-	-oa|-ao|--online-adding)	todo="online_adding" ;;
-
 	*)				todo="choosing" ;;
 esac
 
-#as long as $todo is not empty, loop it
+# main loop
 while [ -n "$todo " ];do
 	$todo
 done
+
+#TODO: add these features
+# 	-a|--adding)	todo="adding_songs" ;;
+#	-o|--online)	ytfzf -ms && exit 0 ||echo -e "\e[0;31mytfzf is not installed\e[0m" ; exit 1 ;;
+#	-oa|-ao|--online-adding)	todo="online_adding" ;;
