@@ -1,5 +1,9 @@
 #!/bin/sh
 
-file=~/.local/share/music_list.csv
+dir=$XDG_DATA_HOME/fumpl/
+file=$XDG_DATA_HOME/fumpl/main
+
 [ -e $file ] || touch $file
-sudo cp ./fumpl /usr/bin/fumpl
+[ -d $dir ] || mkdir $dir
+
+sudo cp ./fumpl /usr/local/bin/fumpl
