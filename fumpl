@@ -1,13 +1,14 @@
 #!/bin/bash
-music_file=~/.local/share/music_list.csv
+
+music_dir=$XDG_DATA_HOME/fumpl
+music_file=$music_dir/"$(ls $music_dir|sort|fzf --reverse)"
 
 # TODO: uses cut twice, I don't like it
 choosing (){
 	vid_selected="$(cut -d ',' -f 1 $music_file|sort|fzf --reverse )"
 	[ -z "$vid_selected" ] && exit 0
-
 	vid=$(grep "$vid_selected" $music_file|cut -d ',' -f 2)
-	mpv --no-vid $vid
+	mpv --no-vid "$vid"
 }
 
 # one liner for shuffling
@@ -17,16 +18,11 @@ shuffle (){
 
 # main case
 case "$1" in
-	-s|--shuffle)	todo="shuffle " ;;
-	*)				todo="choosing" ;;
+	-s|--shuffle)	shuffle ;;
+	*)				while true;do choosing;done ;;
 esac
 
-# main loop
-while [ -n "$todo " ];do
-	$todo
-done
-
-#TODO: add these features
+# TODO: add these features
 # 	-a|--adding)	todo="adding_songs" ;;
 #	-o|--online)	ytfzf -ms && exit 0 ||echo -e "\e[0;31mytfzf is not installed\e[0m" ; exit 1 ;;
 #	-oa|-ao|--online-adding)	todo="online_adding" ;;
