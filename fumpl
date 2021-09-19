@@ -1,6 +1,6 @@
 #!/bin/bash
 music_dir=$XDG_DATA_HOME/fumpl
-music_file=$music_dir/"$(ls $music_dir|sort|fzf --reverse)"
+music_file=$music_dir/"$(ls $music_dir|fzf --reverse)"
 
 # TODO: uses cut twice, I don't like it
 choosing (){
@@ -12,7 +12,7 @@ choosing (){
 
 # one liner for shuffling
 shuffle (){
-	cut -d ',' -f 2 $music_file|shuf|xargs mpv
+	cut -d ',' -f 2 $music_file|shuf|xargs mpv --no-vid
 }
 
 # adding songs
@@ -20,6 +20,7 @@ adding (){
 	read -p "Name of song: " song_name
 	read -p "link/path to song: " link
 	echo "$song_name,$link" >> $music_file
+	echo "$song_name,$link" >> $music_dir/main
 }
 
 # main case
