@@ -1,6 +1,8 @@
 #!/bin/bash
 music_dir=$XDG_DATA_HOME/fumpl
 music_file=$music_dir/"$(ls $music_dir|fzf --reverse)"
+[ -d "$music_file" ] && exit 0
+link_list=$(cut -d ',' -f 2 $music_file)
 
 # TODO: uses cut twice, I don't like it
 choosing (){
@@ -12,15 +14,25 @@ choosing (){
 
 # one liner for shuffling
 shuffle (){
-	cut -d ',' -f 2 $music_file|shuf|xargs mpv --no-vid
+	shuf -e $link_list|xargs mpv --no-vid
 }
 
 # adding songs
 adding (){
 	read -p "Name of song: " song_name
 	read -p "link/path to song: " link
-	echo "$song_name,$link" >> $music_file
-	echo "$song_name,$link" >> $music_dir/main
+	if [ -z "$(grep "^$link$" $link_list)" ];then
+		echo "$song_name,$link" >> $music_file
+
+		# TODO: maybe clean out this code ?
+		if [ "$music_file" != "${music_dir}/main" -a \
+		-z "$(cut -d ',' -f 2 ${music_dir}/main|grep "^$link$")" ]; then
+			echo "$song_name,$link" >> ${music_dir}/main
+		fi
+		printf "\e[0;37mSong added\n"
+	else
+		printf "\e[0;31mThis song already exists\n"
+	fi
 }
 
 # main case
