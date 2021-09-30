@@ -1,13 +1,16 @@
 #!/bin/bash
+
+#working dir, file and global var
 music_dir=$XDG_DATA_HOME/fumpl
 music_file=$music_dir/"$(ls $music_dir|fzf --reverse)"
 [ -d "$music_file" ] && exit 0
 link_list=$(cut -d ',' -f 2 $music_file)
 
-# TODO: uses cut twice, I don't like it
+#TODO: uses cut twice, I don't like it
+#choose video 
 choosing (){
 	vid_selected="$(cut -d ',' -f 1 $music_file|sort|fzf --reverse)"
-	[ -z "$vid_selected" ] && exit 0
+	[ -z "$vid_selected" ] && exit 0 #exit if no vid
 	vid=$(grep "$vid_selected" $music_file|cut -d ',' -f 2)
 	mpv --no-vid "$vid"
 }
@@ -19,23 +22,28 @@ shuffle (){
 
 # adding songs
 adding (){
+
+	#get name,link
 	read -p "Name of song: " song_name
 	read -p "link/path to song: " link
-	if [ -z "$(grep "^$link$" $link_list)" ];then
+
+	#check if link in file, add it if not 
+	if [ -z "$(grep "^$link$" <<< $link_list)" ];then
 		echo "$song_name,$link" >> $music_file
 
-		# TODO: maybe clean out this code ?
+		#TODO: maybe clean out this code ?
+		#If file is not main, and link not in main, add it to main
 		if [ "$music_file" != "${music_dir}/main" -a \
 		-z "$(cut -d ',' -f 2 ${music_dir}/main|grep "^$link$")" ]; then
 			echo "$song_name,$link" >> ${music_dir}/main
 		fi
-		printf "\e[0;37mSong added\n"
+		printf "\e[0;32mSong added\n"
 	else
 		printf "\e[0;31mThis song already exists\n"
 	fi
 }
 
-# main case
+#handle cmd args
 case "$1" in
 	-s|--shuffle)	shuffle ;;
 	-a|--adding)	adding ;;
